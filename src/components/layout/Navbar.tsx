@@ -137,7 +137,7 @@ export default function Navbar() {
 
           {/* CTA */}
           <div className="hidden lg:flex items-center gap-4">
-            
+            <a
               href="tel:514-655-6276"
               className="flex items-center gap-2 text-brand-amber font-semibold text-sm hover:text-brand-amber-light transition-colors"
             >
@@ -200,14 +200,14 @@ export default function Navbar() {
                 </div>
               ))}
               <div className="pt-4 border-t border-white/10">
-                
+                <a
                   href="tel:514-655-6276"
                   className="flex items-center gap-2 px-4 py-3 text-brand-amber font-semibold"
                 >
                   <Phone className="w-4 h-4" />
                   (514)-655-6276
                 </a>
-                
+                <a
                   href="/contact/"
                   className="block mt-2 px-6 py-3 bg-brand-amber text-brand-brown font-bold text-center rounded-full hover:bg-brand-amber-light transition-colors"
                 >
