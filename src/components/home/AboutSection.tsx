@@ -1,12 +1,27 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { useRef, useState, useEffect } from "react";
+import { motion, useInView, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { Play, X } from "lucide-react";
 
 export default function AboutSection() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
+  const [videoOpen, setVideoOpen] = useState(false);
+
+  // Prevent scroll when modal open
+  useEffect(() => {
+    document.body.style.overflow = videoOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [videoOpen]);
+
+  // Escape key closes modal
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") setVideoOpen(false); };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
 
   return (
     <section
@@ -51,12 +66,27 @@ export default function AboutSection() {
               objectives, boost your bottom line, and improve your position in the search engine
               results pages (SERPs) of Google and other search engines.
             </p>
-            <Link
-              href="/web-marketing-agency/"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-brand-amber text-brand-brown font-bold rounded-full hover:bg-brand-amber-light transition-all duration-300 hover:scale-105 amber-glow"
-            >
-              Learn More About Us
-            </Link>
+
+            <div className="flex flex-wrap items-center gap-4">
+              <Link
+                href="/web-marketing-agency/"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-brand-amber text-brand-brown font-bold rounded-full hover:bg-brand-amber-light transition-all duration-300 hover:scale-105 amber-glow"
+              >
+                Learn More About Us
+              </Link>
+
+              {/* Video play button — links to YouTube modal like old site */}
+              <button
+                onClick={() => setVideoOpen(true)}
+                className="group inline-flex items-center gap-3 px-6 py-4 border border-brand-amber/40 text-brand-amber font-semibold rounded-full hover:bg-brand-amber/10 transition-all duration-300"
+                aria-label="Watch video"
+              >
+                <span className="w-8 h-8 rounded-full bg-brand-amber flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                  <Play className="w-3 h-3 text-brand-brown fill-brand-brown ml-0.5" />
+                </span>
+                Watch Video
+              </button>
+            </div>
           </motion.div>
 
           {/* Right: Service cards */}
@@ -101,13 +131,53 @@ export default function AboutSection() {
                   {service.title}
                 </h3>
                 <p className="text-white/60 text-sm leading-relaxed">{service.desc}</p>
-                {/* Glow on hover */}
                 <div className="absolute inset-0 rounded-2xl bg-brand-amber/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
               </motion.div>
             ))}
           </motion.div>
         </div>
       </div>
+
+      {/* Video Modal */}
+      <AnimatePresence>
+        {videoOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm"
+            onClick={() => setVideoOpen(false)}
+            aria-modal="true"
+            role="dialog"
+            aria-label="Video"
+          >
+            <motion.div
+              initial={{ scale: 0.85, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.85, opacity: 0 }}
+              transition={{ duration: 0.3, ease: [0.25, 0.4, 0.25, 1] }}
+              className="relative w-full max-w-4xl aspect-video rounded-2xl overflow-hidden border border-brand-amber/30 shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={() => setVideoOpen(false)}
+                className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-black/60 border border-white/20 flex items-center justify-center text-white hover:text-brand-amber hover:border-brand-amber transition-all duration-200"
+                aria-label="Close video"
+              >
+                <X className="w-4 h-4" />
+              </button>
+              <iframe
+                src="https://www.youtube.com/embed/SmbW8yaxUQg?autoplay=1&color=white"
+                title="Omnivision Design"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="w-full h-full"
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
