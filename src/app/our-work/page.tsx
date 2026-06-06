@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Our Work | Web Design & Digital Marketing Portfolio | Omnivision Design",
@@ -7,7 +8,6 @@ export const metadata: Metadata = {
     "Browse Omnivision Design's portfolio of web design, SEO, and digital marketing projects for businesses across Montreal and Canada.",
 };
 
-// Static fallback — hybrid: try API, fallback to these
 const portfolioItems = [
   {
     title: "Copicom Responsive Web Design",
@@ -59,8 +59,14 @@ const portfolioItems = [
   },
 ];
 
-// Try to get dynamic data from API at build/request time (Server Component)
-async function getPortfolio() {
+type PortfolioItem = {
+  title: string;
+  category: string;
+  thumb: string;
+  full: string;
+};
+
+async function getPortfolio(): Promise<PortfolioItem[]> {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL ?? ""}/api/portfolio`, {
       next: { revalidate: 3600 },
@@ -69,7 +75,7 @@ async function getPortfolio() {
     const data = await res.json();
     if (Array.isArray(data) && data.length > 0) return data;
   } catch {
-    // fallback
+    // fallback to static
   }
   return portfolioItems;
 }
@@ -80,7 +86,6 @@ export default async function OurWorkPage() {
   return (
     <div className="min-h-screen bg-brand-brown-dark pt-32 pb-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
         <div className="text-center mb-16">
           <p className="text-brand-amber font-semibold text-sm uppercase tracking-[0.3em] mb-4">
             Portfolio
@@ -94,41 +99,35 @@ export default async function OurWorkPage() {
           </p>
         </div>
 
-        {/* Grid — clicking opens full image (client-side portal via OurWorkGallery) */}
-        <OurWorkGalleryStatic items={items} />
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {items.map((item) => (
+            <Link
+              key={item.title}
+              href={item.full}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative aspect-[3/2] rounded-xl overflow-hidden border border-white/10 hover:border-brand-amber/50 transition-all duration-300 block"
+              aria-label={`View ${item.title}`}
+            >
+              <Image
+                src={item.thumb}
+                alt={item.title}
+                fill
+                className="object-cover transition-transform duration-700 group-hover:scale-110"
+                sizes="(max-width: 768px) 50vw, 25vw"
+              />
+              <div className="absolute inset-0 bg-brand-brown-dark/0 group-hover:bg-brand-brown-dark/70 transition-all duration-300 flex items-end">
+                <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 px-4 py-3">
+                  <p className="text-white text-xs font-semibold leading-tight">{item.title}</p>
+                  <p className="text-brand-amber text-[10px] uppercase tracking-wider mt-0.5">
+                    {item.category}
+                  </p>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
       </div>
-    </div>
-  );
-}
-
-// A simple server-renderable grid; lightbox is in the separate Client Component below
-function OurWorkGalleryStatic({ items }: { items: typeof portfolioItems }) {
-  return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-      {items.map((item) => (
-        
-          key={item.title}
-          href={item.full}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group relative aspect-[3/2] rounded-xl overflow-hidden border border-white/10 hover:border-brand-amber/50 transition-all duration-300 block"
-          aria-label={`View ${item.title}`}
-        >
-          <Image
-            src={item.thumb}
-            alt={item.title}
-            fill
-            className="object-cover transition-transform duration-700 group-hover:scale-110"
-            sizes="(max-width: 768px) 50vw, 25vw"
-          />
-          <div className="absolute inset-0 bg-brand-brown-dark/0 group-hover:bg-brand-brown-dark/70 transition-all duration-300 flex items-end">
-            <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 px-4 py-3">
-              <p className="text-white text-xs font-semibold leading-tight">{item.title}</p>
-              <p className="text-brand-amber text-[10px] uppercase tracking-wider mt-0.5">{item.category}</p>
-            </div>
-          </div>
-        </a>
-      ))}
     </div>
   );
 }
