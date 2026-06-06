@@ -1,229 +1,144 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
-import { motion, useInView, AnimatePresence } from "framer-motion";
-import Image from "next/image";
+import { useRef } from "react";
+import { motion, useInView } from "framer-motion";
 import Link from "next/link";
-import { X, ZoomIn } from "lucide-react";
 
-// Static fallback data — old website ki real portfolio images
-const staticProjects = [
+const packages = [
   {
-    title: "Copicom Responsive Web Design",
-    category: "Web Design",
-    thumb: "https://www.omnivisiondesign.com/wp-content/themes/omnivision/img/portfolio/copicom-responsive-web-design-thumb.jpg",
-    full: "https://www.omnivisiondesign.com/wp-content/themes/omnivision/img/portfolio/copicom-responsive-web-design.jpg",
+    title: "Web Design",
+    price: "$3,300",
+    period: "",
+    tagline: "Elevate your online presence with our Web Design Packages",
+    href: "/web-design/web-design-packages/",
+    featured: false,
   },
   {
-    title: "Copicom Web Development",
-    category: "Web Design",
-    thumb: "https://www.omnivisiondesign.com/wp-content/themes/omnivision/img/portfolio/Copicom-web-development-thumb.jpg",
-    full: "https://www.omnivisiondesign.com/wp-content/themes/omnivision/img/portfolio/Copicom-web-development.jpg",
+    title: "SEO",
+    price: "$595",
+    period: "/mo",
+    tagline: "Unlock visibility and dominate searches with our SEO Packages",
+    href: "/seo/seo-packages/",
+    featured: true,
   },
   {
-    title: "Darlene Wong Graphic Design",
-    category: "Graphic Design",
-    thumb: "https://www.omnivisiondesign.com/wp-content/themes/omnivision/img/portfolio/darleenwong-graphic-design-thumb.jpg",
-    full: "https://www.omnivisiondesign.com/wp-content/themes/omnivision/img/portfolio/darleenwong-graphic-design.jpg",
+    title: "Google Ads",
+    price: "$385",
+    period: "/mo",
+    tagline: "Unleash success with our Google Ads Packages",
+    href: "/google-ads/google-ads-packages/",
+    featured: false,
   },
   {
-    title: "Hypotheque Web Site Creation",
-    category: "Web Design",
-    thumb: "https://www.omnivisiondesign.com/wp-content/themes/omnivision/img/portfolio/Hypotheque-web-site-creation-thumb.jpg",
-    full: "https://www.omnivisiondesign.com/wp-content/themes/omnivision/img/portfolio/Hypotheque-web-site-creation.jpg",
+    title: "Social",
+    price: "$385",
+    period: "/mo",
+    tagline: "Ignite your brand's social buzz with our Social Media Packages",
+    href: "/social-media/social-media-packages/",
+    featured: false,
   },
   {
-    title: "Omnivision Design Montreal",
-    category: "Web Design",
-    thumb: "https://www.omnivisiondesign.com/wp-content/themes/omnivision/img/portfolio/omnivision-design-montreal-thumb.jpg",
-    full: "https://www.omnivisiondesign.com/wp-content/themes/omnivision/img/portfolio/omnivision-design-montreal.jpg",
+    title: "Email",
+    price: "$385",
+    period: "/mo",
+    tagline: "Elevate your outreach with our Email Marketing Packages",
+    href: "/internet-marketing/email-marketing/",
+    featured: false,
   },
   {
-    title: "Omnivision Web Portfolio",
-    category: "Web Design",
-    thumb: "https://www.omnivisiondesign.com/wp-content/themes/omnivision/img/portfolio/omnivision-design-web-portfolio-thumb.jpg",
-    full: "https://www.omnivisiondesign.com/wp-content/themes/omnivision/img/portfolio/omnivision-design-web-portfolio.jpg",
-  },
-  {
-    title: "Responsive Website Montreal",
-    category: "Web Design",
-    thumb: "https://www.omnivisiondesign.com/wp-content/themes/omnivision/img/portfolio/responsive-website-montreal-thumb.jpg",
-    full: "https://www.omnivisiondesign.com/wp-content/themes/omnivision/img/portfolio/responsive-website-montreal.jpg",
-  },
-  {
-    title: "Uni-Signal Web Development",
-    category: "Web Development",
-    thumb: "https://www.omnivisiondesign.com/wp-content/themes/omnivision/img/portfolio/Uni-signal-web-development-thumb.jpg",
-    full: "https://www.omnivisiondesign.com/wp-content/themes/omnivision/img/portfolio/Uni-signal-web-development.jpg",
+    title: "Mini",
+    price: "$220",
+    period: "/mo",
+    tagline: "Maximize impact and minimize cost with our Mini Packages",
+    href: "/mini-packages/",
+    featured: false,
   },
 ];
 
-type Project = typeof staticProjects[0];
-
-export default function PortfolioSection() {
+export default function PackagesSection() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
-  const [projects, setProjects] = useState<Project[]>(staticProjects);
-  const [selected, setSelected] = useState<Project | null>(null);
-
-  // Hybrid: try to fetch dynamic data from API, fallback to static
-  useEffect(() => {
-    async function fetchPortfolio() {
-      try {
-        const res = await fetch("/api/portfolio", { signal: AbortSignal.timeout(3000) });
-        if (!res.ok) throw new Error("not ok");
-        const data = await res.json();
-        if (Array.isArray(data) && data.length > 0) setProjects(data);
-      } catch {
-        // silently use static data
-      }
-    }
-    fetchPortfolio();
-  }, []);
-
-  // Close modal on Escape key
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") setSelected(null); };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, []);
-
-  // Prevent body scroll when modal open
-  useEffect(() => {
-    document.body.style.overflow = selected ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
-  }, [selected]);
 
   return (
     <section
       ref={ref}
       className="relative py-32 bg-brand-brown overflow-hidden"
-      aria-labelledby="portfolio-heading"
+      aria-labelledby="packages-heading"
     >
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-brand-amber/5 rounded-full blur-3xl" />
+      </div>
+
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8 }}
-          className="text-center mb-6"
+          className="text-center mb-16"
         >
           <p className="text-brand-amber font-semibold text-sm uppercase tracking-[0.3em] mb-4">
-            Our Work
+            Pricing
           </p>
           <h2
-            id="portfolio-heading"
-            className="font-display text-4xl md:text-6xl font-bold text-white mb-4"
+            id="packages-heading"
+            className="font-display text-4xl md:text-5xl font-bold text-white"
           >
-            Some Creative <span className="gradient-text">Work</span>
+            Our <span className="gradient-text">Packages</span>
           </h2>
-          <p className="text-white/60 text-base max-w-2xl mx-auto">
-            Omnivision offers Montreal internet marketing services to small, medium &amp; large businesses,
-            primarily located in Montreal.
-          </p>
         </motion.div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-12">
-          {projects.map((project, i) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {packages.map((pkg, i) => (
             <motion.div
-              key={project.title}
+              key={pkg.title}
               initial={{ opacity: 0, y: 40 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: i * 0.07 }}
-              className="group relative aspect-[3/2] rounded-xl overflow-hidden border border-white/10 hover:border-brand-amber/50 cursor-pointer transition-all duration-300"
-              onClick={() => setSelected(project)}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => e.key === "Enter" && setSelected(project)}
-              aria-label={`Preview ${project.title}`}
+              transition={{ duration: 0.6, delay: i * 0.08 }}
+              className={`relative group ${pkg.featured ? "lg:-mt-4 lg:mb-4" : ""}`}
             >
-              <Image
-                src={project.thumb}
-                alt={project.title}
-                fill
-                className="object-cover transition-transform duration-700 group-hover:scale-110"
-                sizes="(max-width: 768px) 50vw, 25vw"
-              />
-              {/* Overlay */}
-              <div className="absolute inset-0 bg-brand-brown-dark/0 group-hover:bg-brand-brown-dark/70 transition-all duration-300 flex items-center justify-center">
-                <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center gap-2 text-center px-3">
-                  <ZoomIn className="w-8 h-8 text-brand-amber" />
-                  <span className="text-white text-xs font-semibold leading-tight">{project.title}</span>
-                  <span className="text-brand-amber text-[10px] uppercase tracking-wider">{project.category}</span>
+              {pkg.featured && (
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10 px-4 py-1 bg-brand-amber text-brand-brown text-xs font-bold rounded-full">
+                  Most Popular
                 </div>
+              )}
+              <div
+                className={`h-full p-8 rounded-3xl border transition-all duration-500 hover:-translate-y-2 ${
+                  pkg.featured
+                    ? "bg-gradient-to-br from-brand-amber/20 to-brand-amber/5 border-brand-amber/50 shadow-2xl amber-glow"
+                    : "bg-gradient-to-br from-white/5 to-transparent border-white/10 hover:border-brand-amber/40"
+                }`}
+              >
+                <h3 className="font-display text-2xl font-bold text-white mb-6">{pkg.title}</h3>
+
+                <div className="mb-6">
+                  <span className="text-xs text-white/50 uppercase tracking-wider">Starting at</span>
+                  <div className="flex items-baseline gap-1 mt-1">
+                    <span className="font-display text-5xl font-bold text-brand-amber">
+                      {pkg.price}
+                    </span>
+                    {pkg.period && (
+                      <span className="text-white/60 text-base">{pkg.period}</span>
+                    )}
+                  </div>
+                </div>
+
+                <p className="text-white/60 text-sm leading-relaxed mb-8">{pkg.tagline}</p>
+
+                <Link
+                  href={pkg.href}
+                  className={`block w-full text-center py-3 px-6 rounded-xl font-bold text-sm transition-all duration-300 ${
+                    pkg.featured
+                      ? "bg-brand-amber text-brand-brown hover:bg-brand-amber-light"
+                      : "border border-brand-amber/40 text-brand-amber hover:bg-brand-amber/10"
+                  }`}
+                >
+                  Learn More
+                </Link>
               </div>
             </motion.div>
           ))}
         </div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.7 }}
-          className="text-center mt-12"
-        >
-          <Link
-            href="/our-work/"
-            className="inline-flex items-center gap-2 px-8 py-4 border border-brand-amber text-brand-amber font-semibold rounded-xl hover:bg-brand-amber hover:text-brand-brown transition-all duration-300"
-          >
-            View Full Portfolio
-          </Link>
-        </motion.div>
       </div>
-
-      {/* Lightbox Modal */}
-      <AnimatePresence>
-        {selected && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm"
-            onClick={() => setSelected(null)}
-            aria-modal="true"
-            role="dialog"
-            aria-label={selected.title}
-          >
-            <motion.div
-              initial={{ scale: 0.85, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.85, opacity: 0 }}
-              transition={{ duration: 0.3, ease: [0.25, 0.4, 0.25, 1] }}
-              className="relative max-w-4xl w-full bg-brand-brown rounded-2xl overflow-hidden border border-brand-amber/30 shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Close button */}
-              <button
-                onClick={() => setSelected(null)}
-                className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-brand-brown-dark/80 border border-white/20 flex items-center justify-center text-white hover:text-brand-amber hover:border-brand-amber transition-all duration-200"
-                aria-label="Close preview"
-              >
-                <X className="w-4 h-4" />
-              </button>
-
-              {/* Full image */}
-              <div className="relative w-full aspect-[4/3]">
-                <Image
-                  src={selected.full}
-                  alt={selected.title}
-                  fill
-                  className="object-contain bg-brand-brown-dark"
-                  sizes="(max-width: 1024px) 100vw, 896px"
-                  priority
-                />
-              </div>
-
-              {/* Caption */}
-              <div className="px-6 py-4 flex items-center justify-between">
-                <div>
-                  <p className="font-bold text-white text-base">{selected.title}</p>
-                  <p className="text-brand-amber text-xs uppercase tracking-wider mt-0.5">{selected.category}</p>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </section>
   );
 }
