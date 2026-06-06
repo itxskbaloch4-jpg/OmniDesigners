@@ -62,7 +62,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <p className="font-semibold text-white mb-1">Phone</p>
-                    
+                    <
                       href="tel:514-655-6276"
                       className="text-brand-amber hover:text-brand-amber-light transition-colors font-bold text-lg"
                     >
