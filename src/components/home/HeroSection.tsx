@@ -151,7 +151,7 @@ export default function HeroSection() {
             Success is a Click Away
             <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Link>
-          
+          <a
             href="#about"
             className="flex items-center gap-2 px-8 py-4 border border-brand-amber/40 text-brand-amber font-semibold text-base rounded-full hover:bg-brand-amber/10 transition-all duration-300"
           >
