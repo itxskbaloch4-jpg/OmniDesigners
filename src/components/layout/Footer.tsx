@@ -62,7 +62,7 @@ export default function Footer() {
               <p>Montreal, Quebec</p>
               <p>Canada H4V 1K6</p>
               <p className="mt-3">
-                
+                <a
                   href="tel:514-655-6276"
                   className="text-brand-amber font-semibold hover:text-brand-amber-light transition-colors"
                 >
@@ -128,7 +128,7 @@ export default function Footer() {
               { icon: Linkedin, href: "http://ca.linkedin.com/in/omnivisiondesign", label: "LinkedIn" },
               { icon: Instagram, href: "https://www.instagram.com/omnivisiondesign/", label: "Instagram" },
             ].map(({ icon: Icon, href, label }) => (
-              
+              <a
                 key={label}
                 href={href}
                 target="_blank"
